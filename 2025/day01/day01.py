@@ -1,21 +1,32 @@
 from typing import Optional
+from time import perf_counter_ns
 
-def read_input(file_path) -> Optional[list[str]]:
+def timeit(f):
+    def wrap(*args, **kwargs):
+        start = perf_counter_ns()
+        res = f(*args, **kwargs)
+        end = perf_counter_ns()
+        print(f"Function {f.__name__} took {(end - start)/1000000:.2f}ms")
+        return res
+    return wrap
+
+@timeit
+def read_input(file_path) -> Optional[list[tuple[str, int]]]:
     try:
         with open(file_path, 'r') as f:
-            return f.read().split()
+            lines = f.read().split()
+            return [(op[0], int(op[1:])) for op in lines]
     except FileNotFoundError:
         print(f"Error: The file '{file_path}' was not found.")
     except Exception as e:
         print(f"An error occurred: {e}")
 
-def part1(input: list[str]) -> int:
+@timeit
+def part1(input: list[tuple[str, int]]) -> int:
     state = 50
     res = 0
 
-    for op in input:
-        dir = op[0]
-        dist = int(op[1:])
+    for dir, dist in input:
         if dir == 'L':
             state = (state - dist) % 100
         elif dir == 'R':
@@ -26,14 +37,12 @@ def part1(input: list[str]) -> int:
     
     return res
 
-def part2(input: list[str]) -> int:
+@timeit
+def part2(input: list[tuple[str, int]]) -> int:
     state = 50
     res = 0
 
-    for op in input:
-        dir = op[0]
-        dist = int(op[1:])
-
+    for dir, dist in input:
         full_rotations = dist // 100
         dist %= 100
         res += full_rotations

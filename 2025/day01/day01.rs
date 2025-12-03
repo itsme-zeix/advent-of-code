@@ -13,7 +13,7 @@ fn parse_input() -> Vec<(char, i16)> {
         .collect()
 }
 
-fn day01(input: &[(char, i16)]) -> i16 {
+fn part1(input: &[(char, i16)]) -> i16 {
     let mut state: i16 = 50;
     let mut res: i16 = 0;
 
@@ -34,7 +34,7 @@ fn day01(input: &[(char, i16)]) -> i16 {
     res
 }
 
-fn day02(input: &[(char, i16)]) -> i16 {
+fn part2(input: &[(char, i16)]) -> i16 {
     let mut state: i16 = 50;
     let mut res: i16 = 0;
 
@@ -68,10 +68,10 @@ fn main() {
     println!("read_input ({:?})", t.elapsed());
 
     let t = Instant::now();
-    let a1 = day01(&input);
+    let a1 = part1(&input);
     println!("day01: {} ({:?})", a1, t.elapsed());
 
     let t = Instant::now();
-    let a2 = day02(&input);
+    let a2 = part2(&input);
     println!("day02: {} ({:?})", a2, t.elapsed());
 }

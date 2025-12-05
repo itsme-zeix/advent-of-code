@@ -15,4 +15,4 @@ __pycache__/
 
 # Rust / Cargo
 target/
-**/*.rs.bk
+*.rs.bk

@@ -1,6 +1,8 @@
+# Text / inputs
 *.txt
 *input*
 
+# Python
 venv/
 .env/
 __pycache__/
@@ -8,4 +10,9 @@ __pycache__/
 *.exe
 *.out
 
+# macOS
 .DS_Store
+
+# Rust / Cargo
+target/
+**/*.rs.bk

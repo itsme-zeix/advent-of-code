@@ -1,4 +1,3 @@
-from typing import Optional
 from time import perf_counter_ns
 
 
@@ -14,7 +13,7 @@ def timeit(f):
 
 
 @timeit
-def read_input(file_path) -> Optional[list[str]]:
+def read_input(file_path: str) -> list[str] | None:
     try:
         with open(file_path, "r") as f:
             return f.read().split()
@@ -66,7 +65,7 @@ def part2(grid: list[str]) -> int:
     needs_rescan = True
     while needs_rescan:
         needs_rescan = False
-        for i, j in deepcopy(occupied):
+        for i, j in occupied.copy():
             count = 0
             for di in (-1, 0, 1):
                 for dj in (-1, 0, 1):

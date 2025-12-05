@@ -3,7 +3,8 @@ use std::time::Instant;
 const INPUT: &str = include_str!("input.txt");
 
 fn parse_input() -> Vec<(char, i16)> {
-    INPUT.lines()
+    INPUT
+        .lines()
         .map(|s| {
             let (a, b) = s.split_at(1);
             let dir = a.chars().next().expect("empty line");
@@ -56,7 +57,7 @@ fn part2(input: &[(char, i16)]) -> i16 {
                 }
                 state = (state + dist).rem_euclid(100);
             }
-            _ => panic!("Invalid direction {}", dir)
+            _ => panic!("Invalid direction {}", dir),
         }
     }
     res

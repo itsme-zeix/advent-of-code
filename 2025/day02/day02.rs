@@ -1,4 +1,13 @@
-use std::time::Instant;
+use rayon::prelude::*;
+use std::{thread::available_parallelism, thread::scope, time::Instant};
+
+/*
+parse_input:                    30.125µs
+day01:                          9.602042ms
+day02 (sequential):             40.613083ms
+day02 (parallel, std::threads): 11.805708ms
+day02 (parallel, rayon):        7.765291ms
+*/
 
 const INPUT: &str = include_str!("input.txt");
 
@@ -93,6 +102,77 @@ fn part2(input: &[(u64, u64)]) -> u64 {
     res
 }
 
+fn part2_parallel_std(input: &[(u64, u64)]) -> u64 {
+    let num_threads = available_parallelism().map(|x| x.get()).unwrap_or(1);
+
+    // add num_threads - 1for ceiling division
+    let chunk_size = (input.len() + num_threads - 1) / num_threads;
+
+    scope(|s| {
+        let handles: Vec<_> = input
+            .chunks(chunk_size)
+            .map(|chunk| {
+                s.spawn(move || {
+                    let mut local_sum = 0u64;
+                    for &(l, r) in chunk {
+                        for id_int in l..=r {
+                            let id_len = count_digits(id_int);
+                            let max_candidate_len = id_len / 2;
+                            for candidate_len in (1..=max_candidate_len).rev() {
+                                if id_len % candidate_len != 0 {
+                                    continue;
+                                }
+                                if is_invalid(
+                                    id_int,
+                                    get_first_n_digits(id_int, id_len, candidate_len),
+                                    id_len,
+                                    candidate_len,
+                                ) {
+                                    local_sum += id_int;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    local_sum
+                })
+            })
+            .collect();
+
+        handles.into_iter().map(|x| x.join().unwrap()).sum()
+    })
+}
+
+fn part2_parallel_rayon(input: &[(u64, u64)]) -> u64 {
+    input
+        .par_iter()
+        .map(|&(l, r)| {
+            let mut local_sum = 0u64;
+            for id_int in l..=r {
+                let id_len = count_digits(id_int);
+                let max_candidate_len = id_len / 2;
+
+                for candidate_len in (1..=max_candidate_len).rev() {
+                    if id_len % candidate_len != 0 {
+                        continue;
+                    }
+
+                    if is_invalid(
+                        id_int,
+                        get_first_n_digits(id_int, id_len, candidate_len),
+                        id_len,
+                        candidate_len,
+                    ) {
+                        local_sum += id_int;
+                        break;
+                    }
+                }
+            }
+            local_sum
+        })
+        .sum()
+}
+
 fn main() {
     let t = Instant::now();
     let input = parse_input();
@@ -105,4 +185,12 @@ fn main() {
     let t = Instant::now();
     let a2 = part2(&input);
     println!("day02: {} ({:?})", a2, t.elapsed());
+
+    let t = Instant::now();
+    let a2 = part2_parallel_std(&input);
+    println!("day02_parallel_std: {} ({:?})", a2, t.elapsed());
+
+    let t = Instant::now();
+    let a2 = part2_parallel_rayon(&input);
+    println!("day02_parallel_rayon: {} ({:?})", a2, t.elapsed());
 }

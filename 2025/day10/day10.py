@@ -1,5 +1,4 @@
 from time import perf_counter_ns
-from functools import cache
 from scipy.optimize import linprog
 
 

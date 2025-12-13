@@ -34,6 +34,7 @@ def read_input(file_path: str) -> dict[str, list[str]] | None:
 
 @timeit
 def part1(path_map: dict[str, list[str]]) -> int:
+    @cache
     def dfs(curr: str) -> int:
         if curr == "out":
             return 1
@@ -47,6 +48,7 @@ def part1(path_map: dict[str, list[str]]) -> int:
 
 @timeit
 def part2(path_map: dict[str, list[str]]) -> int:
+    @cache
     def dfs(curr: str, fft_found: bool, dac_found: bool) -> int:
         if curr == "out":
             return fft_found and dac_found

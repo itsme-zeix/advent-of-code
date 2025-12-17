@@ -42,9 +42,15 @@ def read_input(file_path: str) -> list[tuple[int, int]] | None:
 
 
 def is_invalid(id: str, id_len: int, substr_len: int) -> bool:
-    substr = id[0:substr_len]
-    repeat_count = id_len // substr_len
-    return id == (repeat_count * substr)
+    # substr = id[0:substr_len]
+    # repeat_count = id_len // substr_len
+    # return id == (repeat_count * substr)
+
+    # Reduce string rebuilding
+    for i in range(substr_len, len(id)):
+        if id[i] != id[i % substr_len]:
+            return False
+    return True
 
 
 @timeit
